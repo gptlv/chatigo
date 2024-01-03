@@ -11,10 +11,10 @@ dropdb:
 	docker exec -it postgres16 dropdb chatigo
 
 migrateup:
-	migrate -path db/migrations -database "postgresql://root@root@localhost:5433/chatigo?sslmode=disable" -verbose up
+	migrate -path db/migrations -database "postgresql://root:root@localhost:5433/chatigo?sslmode=disable" -verbose up
 
 migratedown:
-	migrate -path db/migrations -database "postgresql://root@root@localhost:5433/chatigo?sslmode=disable" -verbose down
+	migrate -path db/migrations -database "postgresql://root:root@localhost:5433/chatigo?sslmode=disable" -verbose down
 
 
 .PHONY: postgresinit postgres createdb dropdb migrateup migratedown
