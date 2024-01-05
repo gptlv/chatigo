@@ -32,7 +32,7 @@ func (h *Handler) CreateRoom(c *gin.Context) {
 
 	h.hub.Rooms[req.ID] = &Room{
 		ID:      req.ID,
-		Name:    req.ID,
+		Name:    req.Name,
 		Clients: make(map[string]*Client),
 	}
 
@@ -68,7 +68,7 @@ func (h *Handler) JoinRoom(c *gin.Context) {
 	}
 
 	m := &Message{
-		Content:  "A new user just joined",
+		Content:  "A new user has joined the room",
 		RoomID:   roomID,
 		Username: username,
 	}
