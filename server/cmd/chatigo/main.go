@@ -5,6 +5,7 @@ import (
 
 	"github.com/gptlv/chatigo/server/db"
 	"github.com/gptlv/chatigo/server/internal/user"
+	"github.com/gptlv/chatigo/server/internal/ws"
 	"github.com/gptlv/chatigo/server/router"
 )
 
@@ -20,7 +21,11 @@ func main() {
 	userSvc := user.NewService(userRep)
 	userHandler := user.NewHandler(userSvc)
 
-	router.InitRouter(userHandler)
+	hub := ws.NewHub()
+	hubHandler := ws.NewHandler(hub)
+	go hub.Run()
+
+	router.InitRouter(userHandler, hubHandler)
 	router.Start("0.0.0.0:8080")
 
 }
