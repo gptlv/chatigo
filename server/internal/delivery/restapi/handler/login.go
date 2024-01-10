@@ -1,41 +1,16 @@
-package handler 
+package handler
 
-func (h *Handler) Login(c *gin.Context) {
-	var req LoginUserReq
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+import (
+	"net/http"
+	"strconv"
+	"time"
 
-	user, err := h.userUseCase.Login(c.Request.Context(), &domain.User{
-		Email: req.Email,
-		Password: req.Password,
-	})
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/gptlv/chatigo/server/internal/domain"
+)
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
-		ID:       strconv.Itoa(int(user.ID)),
-		Username: user.Username,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    strconv.Itoa(int(u.ID)),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
-		},
-	})
-	ss, err := token.SignedString([]byte(secretKey))
-	if err != nil{
-		error
-	}
-
-	c.SetCookie("jwt", ss, 3600, "/", "localhost", false, true)
-
-	c.JSON(http.StatusOK, &LoginUserRes{
-		Username: user.Username, 
-		ID: user.ID,
-	})
-}
+const secretKey = "secret"
 
 type LoginUserReq struct {
 	Username string `json:"username"`
@@ -44,6 +19,51 @@ type LoginUserReq struct {
 }
 
 type LoginUserRes struct {
-	ID          string `json:"id"`
-	Username    string `json:"username"`
+	ID       string `json:"id"`
+	Username string `json:"username"`
+}
+
+type MyJWTClaims struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
+
+func (uh *UserHandler) Login(c *gin.Context) {
+	var userReq LoginUserReq
+
+	if err := c.ShouldBindJSON(&userReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user := domain.User{
+		Email:    userReq.Email,
+		Password: userReq.Password,
+	}
+
+	loggedUser, err := uh.userUsecase.Login(c.Request.Context(), &user)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
+		ID:       strconv.Itoa(int(loggedUser.ID)),
+		Username: loggedUser.Username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    strconv.Itoa(int(loggedUser.ID)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+		},
+	})
+
+	ss, err := token.SignedString([]byte(secretKey))
+
+	c.SetCookie("jwt", ss, 3600, "/", "localhost", false, true)
+
+	res := &LoginUserRes{Username: loggedUser.Username, ID: strconv.Itoa(int(loggedUser.ID))}
+
+	c.JSON(http.StatusOK, res)
+
 }

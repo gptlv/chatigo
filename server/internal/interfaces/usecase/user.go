@@ -1,17 +1,12 @@
-package usecase
+// package interfaces
 
-import (
-	"context"
-)
+// import (
+// 	"context"
 
-type UserInterface interface{
-	CreateUser(c context.Context, req *domain.User) (*domain.User, error)
-	Login(c context.Context, req *domain.User) (*domain.User, error)
-}
+// 	"github.com/gptlv/chatigo/server/internal/domain"
+// )
 
-type User struct {
-	ID       int64
-	Username string
-	Email    string
-	Password string
-}
+// type UserUsecase interface {
+// 	CreateUser(c context.Context, req *domain.User) (*domain.User, error)
+// 	Login(c context.Context, req *domain.User) (*domain.User, error)
+// }

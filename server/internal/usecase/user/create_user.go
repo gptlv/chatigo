@@ -1,48 +1,49 @@
-package user
+package usecase
 
-func (uc *UseCase) CreateUser(ctx context.Context, user *domain.User) (*domain.User, error) {
+import (
+	"context"
+	"fmt"
+
+	"github.com/gptlv/chatigo/server/internal/domain"
+	"golang.org/x/crypto/bcrypt"
+)
+
+func (uu *userUsecase) CreateUser(c context.Context, u *domain.User) (*domain.User, error) {
 	// проверить полноценность данных, если данные не полные то вернуть ошибку
-	if req == nil{
-		return nil, fmt.Errorf(ctx, "user is nil")
-	}
+	// if u == nil {
+	// 	return nil, fmt.Errorf(c, "user is nil")
+	// }
 
-	if req.Username == ""{
-		return error
-	}
+	// if u.Username == "" {
+	// 	return error
+	// }
 
-	if req.Email == ""{
-		return error
-	}
+	// if u.Email == "" {
+	// 	return error
+	// }
 
-	if req.Password == ""{
-		return error
-	}
+	// if u.Password == "" {
+	// 	return error
+	// }
 
-	hashedPassword, err := HashPassword(req.Password)
+	hashedPassword, err := HashPassword(u.Password)
 	if err != nil {
-		return nil, fmt.Errorf(ctx, "cann`t create password hash: %w", err)
+		return nil, fmt.Errorf("cann`t create password hash: %w", err)
 	}
 
-	user := &User{
-		Username: req.Username,
-		Email:    req.Email,
+	user := &domain.User{
+		Username: u.Username,
+		Email:    u.Email,
 		Password: hashedPassword,
 	}
 
-	user, err = uc.Repository.CreateUser(ctx, user)
+	user, err = uu.userRepo.CreateUser(c, user)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &CreateUserRes{
-		ID:       strconv.Itoa(int(r.ID)),
-		Username: r.Username,
-		Email:    r.Email,
-	}
-
-	return res, nil
+	return user, nil
 }
-
 
 func HashPassword(password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

@@ -1,18 +1,19 @@
-package user
+package postgres
 
 import (
 	"context"
-	"database/sql"
+
+	"github.com/gptlv/chatigo/server/internal/domain"
 )
 
 const queryGetUserByEmail = `
 SELECT id, email, username, password FROM users WHERE email = $1
 `
 
-func (r *repository) GetUserByEmail(ctx context.Context, email string) (*User, error) {
-	user := User{}
+func (r *repository) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+	user := domain.User{}
 
-	err := r.db.QueryRowContext(ctx, query, email).Scan(&user.ID, &user.Email, &user.Username, &user.Password)
+	err := r.db.QueryRowContext(ctx, queryGetUserByEmail, email).Scan(&user.ID, &user.Email, &user.Username, &user.Password)
 	if err != nil {
 		return nil, err
 	}

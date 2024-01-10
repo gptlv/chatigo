@@ -1,15 +1,23 @@
-package hanlder 
+package handler
 
-func (h *Handler) CreateUser(c *gin.Context) {
+import (
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gptlv/chatigo/server/internal/domain"
+)
+
+func (uh *UserHandler) CreateUser(c *gin.Context) {
 	var req CreateUserReq
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	user, err := h.userUseCase.CreateUser(c.Request.Context(), &domain.User{
+	user, err := uh.userUsecase.CreateUser(c.Request.Context(), &domain.User{
 		Username: req.Username,
-		Email: req.Email,
+		Email:    req.Email,
 		Password: req.Password,
 	})
 	if err != nil {
@@ -18,9 +26,9 @@ func (h *Handler) CreateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, CreateUserRes{
-		ID: user.ID,
+		ID:       strconv.Itoa(int(user.ID)),
 		Username: user.Username,
-		Email: user.Email,
+		Email:    user.Email,
 	})
 }
 

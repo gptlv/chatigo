@@ -1,14 +1,15 @@
-package user
+package postgres
 
 import (
-	"context"
 	"database/sql"
+
+	"github.com/gptlv/chatigo/server/internal/domain"
 )
 
 type repository struct {
-	db sql.DB
+	db *sql.DB
 }
 
-func NewRepository(db sql.DB) Repository {
+func NewRepository(db *sql.DB) domain.UserRepository {
 	return &repository{db: db}
 }

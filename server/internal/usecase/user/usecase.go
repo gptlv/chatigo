@@ -1,21 +1,13 @@
-package user
+package usecase
 
-import (
-	"context"
-	"strconv"
-	"time"
-	"fmt"
+import "github.com/gptlv/chatigo/server/internal/domain"
 
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/gptlv/chatigo/server/util"
-)
-
-type UseCase struct{
-	rep repository.UserInterface
+type userUsecase struct {
+	userRepo domain.UserRepository
 }
 
-func NewUseCase(rep repository.UserInterface) *UseCase{
-	return *UseCase{
-		rep:	rep,
+func NewUserUsecase(ur domain.UserRepository) domain.UserUsecase {
+	return &userUsecase{
+		userRepo: ur,
 	}
 }

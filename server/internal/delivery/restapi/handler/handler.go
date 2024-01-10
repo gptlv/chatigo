@@ -1,19 +1,15 @@
 package handler
 
-package user
-
 import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
+	"github.com/gptlv/chatigo/server/internal/domain"
 )
 
-type Handler struct {
-	userUseCase user.UseCase
+type UserHandler struct {
+	userUsecase domain.UserUsecase
 }
 
-func NewHandler(userUseCase user.UseCase) *Handler {
-	return &Handler{
-		userUseCase: userUseCase,
+func NewHandler(uu domain.UserUsecase) *UserHandler {
+	return &UserHandler{
+		userUsecase: uu,
 	}
 }

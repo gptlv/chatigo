@@ -1,33 +1,27 @@
-package user
+package usecase
 
-func (uc *UseCase) Login(c context.Context, req *domain.User) (*domain.User, error) {
-	user, err := s.Repository.GetUserByEmail(ctx, req.Email)
+import (
+	"context"
+	"fmt"
+
+	"github.com/gptlv/chatigo/server/internal/domain"
+	"golang.org/x/crypto/bcrypt"
+)
+
+func (uu *userUsecase) Login(c context.Context, req *domain.User) (*domain.User, error) {
+	user, err := uu.userRepo.GetUserByEmail(c, req.Email)
 	if err != nil {
-		return nil, fmt.Error(ctx, "err with getting email: %w", err)
+		return nil, fmt.Errorf("err with getting email: %w", err)
 	}
 
-	err = CheckPasswordWithHash(req.Password, u.Password)
+	err = CheckPasswordWithHash(req.Password, user.Password)
 	if err != nil {
-		return nil, fmt.Error(ctx, "err with check password with hash: %w", err)
+		return nil, fmt.Errorf("err with check password with hash: %w", err)
 	}
 
-	return &LoginUserRes{accessToken: ss, Username: u.Username, ID: strconv.Itoa(int(u.ID))}, nil
+	return &domain.User{Username: user.Username, ID: user.ID}, nil
 }
 
 func CheckPasswordWithHash(password string, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
-
-
-/*
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, MyJWTClaims{
-		ID:       strconv.Itoa(int(u.ID)),
-		Username: u.Username,
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    strconv.Itoa(int(u.ID)),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
-		},
-	})
-
-	ss, err := token.SignedString([]byte(secretKey))
-*/
