@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/gptlv/chatigo/server/internal/delivery/restapi/handler"
+	"github.com/gptlv/chatigo/server/internal/delivery/restapi"
+	"github.com/gptlv/chatigo/server/internal/delivery/router"
+	"github.com/gptlv/chatigo/server/internal/delivery/ws"
 	db "github.com/gptlv/chatigo/server/internal/repository/postgres"
 	postgres "github.com/gptlv/chatigo/server/internal/repository/postgres/user"
 	usecase "github.com/gptlv/chatigo/server/internal/usecase/user"
@@ -12,16 +14,19 @@ import (
 func main() {
 
 	dbConn, err := db.NewDatabase()
-
 	if err != nil {
 		log.Fatalf("DB connection error: %s", err)
 	}
 
 	userRepo := postgres.NewRepository(dbConn)
 	userUsecase := usecase.NewUserUsecase(userRepo)
-	userHandler := handler.NewHandler(userUsecase)
+	userHandler := restapi.NewUserHandler(userUsecase)
 
-	handler.InitRouter(userHandler)
-	handler.Start("0.0.0.0:1337")
+	wsServer := ws.NewServer()
+	wsHandler := ws.NewHandler(wsServer)
+	go wsServer.Run()
+
+	router.InitRouter(userHandler, wsHandler)
+	router.Start("0.0.0.0:1337")
 
 }
