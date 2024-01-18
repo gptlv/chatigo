@@ -1,0 +1,13 @@
+package servicemessage
+
+import "github.com/gptlv/chatigo/server/internal/domain"
+
+type WsServerHandler struct {
+	wsServerUsecase domain.WsServerUsecase
+}
+
+func NewWsServerHandler(wssu domain.WsServerUsecase) *UserHandler {
+	return &WsServerHandler{
+		wsServerUsecase: wssu,
+	}
+}
