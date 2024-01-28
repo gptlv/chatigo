@@ -32,11 +32,6 @@ func InitRouter(uh *restapi.UserHandler, wsh *ws.Handler) {
 
 	r.GET("/ws", wsh.ServeWs)
 
-	// r.POST("/ws/createRoom", wsHandler.CreateRoom)
-	// r.GET("/ws/joinRoom/:roomId", wsHandler.JoinRoom)
-	// r.GET("/ws/getRooms", wsHandler.GetRooms)
-	// r.GET("/ws/getClients/:roomId", wsHandler.GetClients)
-
 }
 
 func Start(addr string) error {

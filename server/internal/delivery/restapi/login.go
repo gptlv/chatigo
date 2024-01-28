@@ -19,7 +19,7 @@ type LoginUserReq struct {
 }
 
 type LoginUserRes struct {
-	ID       string `json:"id"`
+	Email    string `json:"email"`
 	Username string `json:"username"`
 }
 
@@ -43,7 +43,6 @@ func (uh *UserHandler) Login(c *gin.Context) {
 	}
 
 	loggedUser, err := uh.userUsecase.Login(c.Request.Context(), &user)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -59,10 +58,14 @@ func (uh *UserHandler) Login(c *gin.Context) {
 	})
 
 	ss, err := token.SignedString([]byte(secretKey))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	c.SetCookie("jwt", ss, 3600, "/", "localhost", false, true)
 
-	res := &LoginUserRes{Username: loggedUser.Username, ID: strconv.Itoa(int(loggedUser.ID))}
+	res := &LoginUserRes{Username: loggedUser.Username}
 
 	c.JSON(http.StatusOK, res)
 

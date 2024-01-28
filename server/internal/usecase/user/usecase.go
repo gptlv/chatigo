@@ -1,12 +1,15 @@
 package usecase
 
-import "github.com/gptlv/chatigo/server/internal/domain"
+import (
+	urepository "github.com/gptlv/chatigo/server/internal/interfaces/repository"
+	uusecase "github.com/gptlv/chatigo/server/internal/interfaces/usecase"
+)
 
 type userUsecase struct {
-	userRepo domain.UserRepository
+	userRepo urepository.UserRepository
 }
 
-func NewUserUsecase(ur domain.UserRepository) domain.UserUsecase {
+func NewUserUsecase(ur urepository.UserRepository) uusecase.UserUsecase {
 	return &userUsecase{
 		userRepo: ur,
 	}

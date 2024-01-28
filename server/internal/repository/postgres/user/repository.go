@@ -3,13 +3,13 @@ package postgres
 import (
 	"database/sql"
 
-	"github.com/gptlv/chatigo/server/internal/domain"
+	urepository "github.com/gptlv/chatigo/server/internal/interfaces/repository"
 )
 
 type repository struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) domain.UserRepository {
+func NewRepository(db *sql.DB) urepository.UserRepository {
 	return &repository{db: db}
 }

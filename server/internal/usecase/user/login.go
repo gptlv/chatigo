@@ -11,12 +11,12 @@ import (
 func (uu *userUsecase) Login(c context.Context, req *domain.User) (*domain.User, error) {
 	user, err := uu.userRepo.GetUserByEmail(c, req.Email)
 	if err != nil {
-		return nil, fmt.Errorf("err with getting email: %w", err)
+		return nil, fmt.Errorf("Failed to get user by email: %w", err)
 	}
 
 	err = CheckPasswordWithHash(req.Password, user.Password)
 	if err != nil {
-		return nil, fmt.Errorf("err with check password with hash: %w", err)
+		return nil, fmt.Errorf("Failed to check password with hash: %w", err)
 	}
 
 	return &domain.User{Username: user.Username, ID: user.ID}, nil

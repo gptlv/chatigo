@@ -1,14 +1,14 @@
 package restapi
 
 import (
-	"github.com/gptlv/chatigo/server/internal/domain"
+	uusecase "github.com/gptlv/chatigo/server/internal/interfaces/usecase"
 )
 
 type UserHandler struct {
-	userUsecase domain.UserUsecase
+	userUsecase uusecase.UserUsecase
 }
 
-func NewUserHandler(uu domain.UserUsecase) *UserHandler {
+func NewUserHandler(uu uusecase.UserUsecase) *UserHandler {
 	return &UserHandler{
 		userUsecase: uu,
 	}

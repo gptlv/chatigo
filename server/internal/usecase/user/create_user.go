@@ -9,26 +9,25 @@ import (
 )
 
 func (uu *userUsecase) CreateUser(c context.Context, u *domain.User) (*domain.User, error) {
-	// проверить полноценность данных, если данные не полные то вернуть ошибку
-	// if u == nil {
-	// 	return nil, fmt.Errorf(c, "user is nil")
-	// }
+	if u == nil {
+		return nil, fmt.Errorf("Empty user")
+	}
 
-	// if u.Username == "" {
-	// 	return error
-	// }
+	if u.Username == "" {
+		return nil, fmt.Errorf("Empty username")
+	}
 
-	// if u.Email == "" {
-	// 	return error
-	// }
+	if u.Email == "" {
+		return nil, fmt.Errorf("Empty email")
+	}
 
-	// if u.Password == "" {
-	// 	return error
-	// }
+	if u.Password == "" {
+		return nil, fmt.Errorf("Empty password")
+	}
 
 	hashedPassword, err := HashPassword(u.Password)
 	if err != nil {
-		return nil, fmt.Errorf("cann`t create password hash: %w", err)
+		return nil, fmt.Errorf("Failed to create a password hash: %w", err)
 	}
 
 	user := &domain.User{
@@ -39,7 +38,7 @@ func (uu *userUsecase) CreateUser(c context.Context, u *domain.User) (*domain.Us
 
 	user, err = uu.userRepo.CreateUser(c, user)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to create a user: %w", err)
 	}
 
 	return user, nil
@@ -47,9 +46,8 @@ func (uu *userUsecase) CreateUser(c context.Context, u *domain.User) (*domain.Us
 
 func HashPassword(password string) (string, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Failed to generate a hash: %w", err)
 	}
 
 	return string(hashedPassword), nil

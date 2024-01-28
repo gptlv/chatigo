@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gptlv/chatigo/server/internal/domain"
 )
@@ -15,7 +16,7 @@ func (r *repository) CreateUser(ctx context.Context, user *domain.User) (*domain
 
 	err := r.db.QueryRowContext(ctx, queryCreateUser, user.Username, user.Password, user.Email).Scan(&lastInsertId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to execute a row query: %w", err)
 	}
 
 	user.ID = int64(lastInsertId)

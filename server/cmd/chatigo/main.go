@@ -11,9 +11,11 @@ import (
 	usecase "github.com/gptlv/chatigo/server/internal/usecase/user"
 )
 
+const dbSource = "postgresql://root:root@localhost:5433/chatigo?sslmode=disable"
+
 func main() {
 
-	dbConn, err := db.NewDatabase()
+	dbConn, err := db.NewDatabase(dbSource)
 	if err != nil {
 		log.Fatalf("DB connection error: %s", err)
 	}

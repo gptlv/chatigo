@@ -2,15 +2,15 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 
 	_ "github.com/lib/pq"
 )
 
-func NewDatabase() (*sql.DB, error) {
-	db, err := sql.Open("postgres", "postgresql://root:root@localhost:5433/chatigo?sslmode=disable")
-
+func NewDatabase(source string) (*sql.DB, error) {
+	db, err := sql.Open("postgres", source)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Failed to open a database: %w", err)
 	}
 
 	return db, nil
