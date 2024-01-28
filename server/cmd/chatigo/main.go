@@ -3,29 +3,32 @@ package main
 import (
 	"log"
 
-	"github.com/gptlv/chatigo/server/db"
-	"github.com/gptlv/chatigo/server/internal/user"
-	"github.com/gptlv/chatigo/server/internal/ws"
-	"github.com/gptlv/chatigo/server/router"
+	"github.com/gptlv/chatigo/server/internal/delivery/restapi"
+	"github.com/gptlv/chatigo/server/internal/delivery/router"
+	"github.com/gptlv/chatigo/server/internal/delivery/ws"
+	db "github.com/gptlv/chatigo/server/internal/repository/postgres"
+	postgres "github.com/gptlv/chatigo/server/internal/repository/postgres/user"
+	usecase "github.com/gptlv/chatigo/server/internal/usecase/user"
 )
+
+const dbSource = "postgresql://root:root@localhost:5433/chatigo?sslmode=disable"
 
 func main() {
 
-	dbConn, err := db.NewDatabase()
-
+	dbConn, err := db.NewDatabase(dbSource)
 	if err != nil {
 		log.Fatalf("DB connection error: %s", err)
 	}
 
-	userRep := user.NewRepository(dbConn.GetDB())
-	userSvc := user.NewService(userRep)
-	userHandler := user.NewHandler(userSvc)
+	userRepo := postgres.NewRepository(dbConn)
+	userUsecase := usecase.NewUserUsecase(userRepo)
+	userHandler := restapi.NewUserHandler(userUsecase)
 
-	hub := ws.NewHub()
-	hubHandler := ws.NewHandler(hub)
-	go hub.Run()
+	wsServer := ws.NewServer()
+	wsHandler := ws.NewHandler(wsServer)
+	go wsServer.Run()
 
-	router.InitRouter(userHandler, hubHandler)
-	router.Start("0.0.0.0:8080")
+	router.InitRouter(userHandler, wsHandler)
+	router.Start("0.0.0.0:1337")
 
 }
